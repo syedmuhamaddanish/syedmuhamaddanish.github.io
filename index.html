@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S3 Lab | Syed Muhammad Danish</title>
+    <link href='https://fonts.googleapis.com/css?family=Oswald:700' rel='stylesheet' type='text/css'>
+    <style>
+        :root {
+            --s3-navy: #1a2a3a;
+            --s3-emerald: #27ae60;
+            --s3-light-green: #eafaf1;
+            --s3-accent-blue: #2980b9;
+            --text-main: #34495e;
+            --text-light: #7f8c8d;
+            --nav-bg: #ffffff;
+        }
+
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 0;
+            color: var(--text-main);
+            background-color: #ffffff;
+            line-height: 1.6;
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: sticky;
+            top: 0;
+            background-color: var(--nav-bg);
+            border-bottom: 2px solid var(--s3-light-green);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            padding: 12px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            margin: 0; padding: 0;
+            gap: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        nav a {
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: bold;
+            color: var(--s3-navy);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 5px 10px;
+        }
+        nav a:hover { color: var(--s3-emerald); }
+        nav li.active a {
+            background-color: var(--s3-emerald);
+            color: white;
+            border-radius: 4px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            text-align: center;
+            padding: 60px 20px 40px 20px;
+            background: linear-gradient(to bottom, #ffffff, var(--s3-light-green));
+        }
+        .title-line {
+            display: flex; align-items: center; justify-content: center;
+            gap: 20px; color: var(--s3-emerald);
+            font-size: 18px; font-weight: bold;
+            margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px;
+        }
+        .title-line::before, .title-line::after {
+            content: ""; height: 2px; background-color: var(--s3-emerald);
+            flex-grow: 1; max-width: 100px; opacity: 0.3;
+        }
+        .profile-container {
+            display: flex; justify-content: center; align-items: center; gap: 40px;
+        }
+        .profile-img {
+            width: 170px; height: 170px; border-radius: 20px;
+            object-fit: cover; border: 4px solid white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .name-block h1 {
+            font-family: 'Oswald', sans-serif; font-size: 44px; margin: 0; color: var(--s3-navy);
+        }
+        .name-block p { margin: 5px 0; font-size: 17px; color: var(--text-light); }
+        .social-links a {
+            font-size: 14px; margin-right: 15px; color: var(--s3-accent-blue);
+            text-decoration: none; font-weight: bold;
+        }
+
+        .color-divider {
+            height: 10px; background: linear-gradient(to right, var(--s3-navy), var(--s3-emerald)); width: 100%;
+        }
+
+        /* --- CONTENT --- */
+        .container { max-width: 1000px; margin: 0 auto; padding: 40px 20px 80px 20px; }
+        
+        h2.section-header {
+            text-align: center; font-size: 30px; color: var(--s3-navy);
+            border-bottom: 2px solid var(--s3-light-green);
+            padding-bottom: 10px; margin: 60px 0 30px 0;
+            text-transform: uppercase;
+        }
+
+        .intro-box {
+            font-size: 17px; text-align: justify; color: var(--text-main);
+            background: #fff; padding: 25px; border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); border-left: 5px solid var(--s3-emerald);
+        }
+
+        /* --- TEAM GRID --- */
+        .grid-container {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px; margin: 40px 0;
+        }
+        .grid-card {
+            border-radius: 15px; padding: 30px 10px; text-align: center; color: white;
+            transition: 0.3s;
+        }
+        .grid-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.15); }
+        .grid-card span { font-size: 40px; display: block; margin-bottom: 10px; }
+        .grid-card h3 { margin: 0; font-size: 16px; text-transform: uppercase; }
+
+        .c-1 { background: var(--s3-navy); }
+        .c-2 { background: var(--s3-emerald); }
+        .c-3 { background: var(--s3-accent-blue); }
+        .c-4 { background: #34495e; }
+        .c-5 { background: #27ae60; }
+
+        /* --- STUDENTS --- */
+        .student-row {
+            padding: 15px; border-bottom: 1px solid #eee;
+            display: flex; align-items: center; gap: 15px; transition: 0.2s;
+        }
+        .student-row:hover { background-color: var(--s3-light-green); }
+        .student-tag { 
+            font-size: 11px; background: var(--s3-navy); color: white; 
+            padding: 2px 8px; border-radius: 4px; font-weight: bold; text-transform: uppercase;
+        }
+
+        /* --- PUBLICATIONS --- */
+        .pub-item { margin-bottom: 18px; padding-left: 15px; border-left: 3px solid var(--s3-emerald); }
+        .pub-item a { color: var(--s3-accent-blue); text-decoration: none; }
+        .status-tag { color: #e74c3c; font-weight: bold; font-size: 0.9em; }
+        .core-a { color: #e74c3c; font-weight: bold; }
+
+        @media (max-width: 768px) {
+            .profile-container { flex-direction: column; text-align: center; }
+            .title-line::before, .title-line::after { display: none; }
+        }
+
+        /* Principal Investigator Layout */
+.pi-container {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    margin-bottom: 60px;
+}
+
+.pi-image {
+    flex: 0 0 220px;
+}
+
+.pi-image img {
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.pi-text {
+    flex: 1;
+    text-align: justify;
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+/* Team Styling */
+.team-block {
+    background: #fdfdfd;
+    padding: 30px;
+    border-radius: 15px;
+    border: 1px solid #eee;
+}
+
+.team-block h3 {
+    font-family: 'Oswald', sans-serif;
+    color: var(--s3-navy);
+    border-bottom: 2px solid var(--s3-emerald);
+    display: inline-block;
+    padding-bottom: 5px;
+    margin-bottom: 20px;
+}
+
+.student-row {
+    padding: 12px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+@media (max-width: 768px) {
+    .pi-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    .pi-image {
+        flex: 0 0 auto;
+        width: 120px;
+        margin-bottom: 20px;
+    }
+}
+    </style>
+</head>
+<body>
+
+    <nav>
+        <ul>
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#team">Team</a></li>
+            <li><a href="#students">Students</a></li>
+            <li><a href="#publications">Papers</a></li>
+            <li><a href="#teaching">Teaching</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <header style="background: linear-gradient(135deg, var(--s3-navy) 0%, #2c3e50 100%); color: white; padding: 100px 20px; text-align: center; clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);">
+    <div style="max-width: 1000px; margin: 0 auto;">
+        <h2 style="color: var(--s3-emerald); font-size: 22px; letter-spacing: 5px; margin-bottom: 10px; font-weight: bold;">WELCOME TO</h2>
+        <h1 style="font-family: 'Oswald', sans-serif; font-size: 65px; line-height: 1; margin: 0 0 20px 0;">
+            S<sup style="font-size: 35px; top: -0.5em; color: var(--s3-emerald);">3</sup> LAB
+        </h1>
+        <p style="font-size: 24px; font-weight: 300; opacity: 0.9; max-width: 700px; margin: 0 auto 20px auto;">
+            Sustainable, Smart, and Efficient Systems Laboratory
+        </p>
+        
+        <div style="display: inline-block; padding-top: 15px;">
+            <p style="font-size: 20px; text-transform: uppercase; letter-spacing: 4px; color: #ffffff; font-weight: bold;">
+                @ Algoma University
+            </p>
+        </div>
+    </div>
+</header>
+
+    <div class="color-divider"></div>
+
+    <main class="container">
+        
+        <h2 class="section-header">Introduction</h2>
+        <div class="intro-box">
+            <p>My research group investigates efficiency, scalability, and sustainability in modern computing and cyber-physical systems. By developing rigorous methodologies to quantify and reduce energy consumption and carbon footprint, our work aims to enable sustainable system operation and support the transition toward net-zero emissions by 2050.</p>
+            
+        </div>
+
+        <h2 id="team" class="section-header">Principal Investigator</h2>
+    
+    <div class="pi-container">
+        <div class="pi-image">
+            <img src="pic1.jpg" alt="Syed Muhammad Danish">
+        </div>
+
+        <div class="pi-text">
+            <p>
+                <strong>Syed Muhammad Danish</strong> is an Assistant Professor at <strong>Algoma University</strong>. Previously, he was a postdoctoral researcher and lecturer at York University under the supervision of Prof. Sotirios Liaskos. He received his Ph.D. from ETS Montreal in August 2022, advised by Prof. Kaiwen Zhang and co-advised by Prof. Hans-Arno Jacobsen. Prior to joining ETS Montreal, he served as a research assistant at Frederick University, Cyprus, under the Erasmus+ project. His research focuses on sustainable and intelligent systems, spanning green energy, blockchain technologies, and energy-efficient AI.
+            </p>
+
+           
+        </div>
+    </div>
+
+        <h2 id="students" class="section-header">Current Students</h2>
+        <div class="student-row">
+            <span class="student-tag">MSc Thesis</span>
+            <div><b>Oussema Kirmani</b> – Analyzing the Sustainability of LLMs</div>
+        </div>
+        <div class="student-row">
+            <span class="student-tag">MSc Thesis</span>
+            <div><b>Sabiya Banu Masthan Ali</b> – Benchmarking the Energy Consumption of LLMs</div>
+        </div>
+
+        <h2 class="section-header">Former Students</h2>
+        <div class="student-row"><span>👤</span><div><b>Shadikur Rahman</b> – Research Assistant</div></div>
+        <div class="student-row"><span>👤</span><div><b>Umme Aiman Koana</b> – Research Assistant</div></div>
+        <div class="student-row"><span>👤</span><div><b>Humza Ashraf</b> – Research Assistant</div></div>
+        <div class="student-row"><span>👤</span><div><b>Muhammad Kaleem Ullah Khan</b> – Research Assistant</div></div>
+
+
+        <div class="col" id="publications-section">
+    <h2 id="publications" class="section-header">Research Publications</h2>
+
+    <p style="margin-bottom: 25px;">
+        For a complete list of my research output, please visit my 
+        <a href="https://scholar.google.ca/citations?user=OAiYfI8AAAAJ&hl=en" target="_blank" style="color: var(--s3-accent-blue); font-weight: bold;">Google Scholar profile</a>. 
+        A selection of recent publications is listed below.
+    </p>
+
+    <h3 style="color: var(--s3-navy); border-left: 4px solid var(--s3-emerald); padding-left: 15px; margin-bottom: 20px;">Selected Papers</h3>
+
+    <div class="pub-item">
+        <b>FedHAT: Resource-Aware Hybrid Federated Adversarial Training for Generalized Robustness</b> — 
+        <span class="status-tag">Submitted</span>
+    </div>
+
+    <div class="pub-item">
+        <b>Assessing the Sustainability of LLM Inference through Energy–Accuracy Analysis</b> — 
+        <span class="status-tag">Submitted</span>
+    </div>
+
+    <div class="pub-item">
+        <b>Efficient Federated LLM Framework for Intelligent IoMT Management</b> — 
+        <span class="status-tag">Submitted</span>
+    </div>
+
+    <div class="pub-item">
+        <b>Digital Payments on Infrastructure-less Networks: A Systematic Literature Review</b> — 
+        <span class="status-tag">Submitted</span>
+    </div>
+
+    <div class="pub-item">
+        <b>ARIES-6G: Aerial Resource Allocation and Trajectory Integration in RIS-UAV-Enabled ISAC for URLLC in Industrial 6G Networks</b> — 
+        <span class="status-tag">Submitted</span>
+    </div>
+
+    <div class="pub-item">
+        <a href="https://arxiv.org/abs/2509.10436" target="_blank"><b>RefactorCoderQA: Benchmarking LLMs for Multi-Domain Coding Question Solutions in Cloud and Edge Deployment</b></a> — 
+        <span class="status-tag">Submitted</span>
+    </div>
+
+    <div class="pub-item">
+        <b>Aligning Pre-Trained LLMs for Enhanced UAV Power Consumption Forecasting</b> — 
+        <span style="color: var(--s3-emerald); font-weight: bold;">Accepted at IEEE Globecom 2025</span>
+    </div>
+
+    <div class="pub-item">
+        <a href="https://arxiv.org/abs/2508.08332" target="_blank"><b>Energy-Aware Code Generation with LLMs: Benchmarking Small vs. Large Language Models for Sustainable AI Programming</b></a> — 
+        <b>IEEE FLLM 2025</b>
+    </div>
+
+    <div class="pub-item">
+        <a href="https://arxiv.org/abs/2509.09947" target="_blank"><b>Toward Green Code: Prompting Small Language Models for Energy-Efficient Code Generation</b></a> — 
+        <b>IEEE FLLM 2025</b>
+    </div>
+
+    <div class="pub-item">
+        <a href="https://arxiv.org/abs/2510.05495" target="_blank"><b>Automated Research Article Classification and Recommendation Using NLP and ML</b></a> — 
+        <b>IEEE FLLM 2025</b>
+    </div>
+
+    <div class="pub-item">
+        <a href="https://ieeexplore.ieee.org/abstract/document/11302915/" target="_blank"><b>Scaling Smart: A Rigorous Framework for Selecting Optimal Layer 2 Blockchain Solutions</b></a> — 
+        <b>IEEE Brains 2025</b>
+    </div>
+
+    <div class="pub-item">
+        <a href="https://dl.acm.org/doi/abs/10.1145/3709016.3737806" target="_blank"><b>Privacy-Preserving Energy Trading: A TEE-Based Blockchain Solution Using Secret Network</b></a> — 
+        <b>ACM BSCI 2025</b>
+    </div>
+
+    <div class="pub-item">
+        <a href="https://ieeexplore.ieee.org/document/11114733" target="_blank"><b>Zero SolarWing: A net-Zero Solar Wind-Powered UAV-Enabled RIS System for URLLC Services in 6G Compute First Networks</b></a> — 
+        <b>IEEE Transactions on Consumer Electronics 2025</b>
+    </div>
+
+    <div class="pub-item">
+        <a href="https://ieeexplore.ieee.org/document/10977019" target="_blank"><b>Block-FeST: Blockchain-Enhanced Federated Sparse Transformers for Privacy-Preserving RES Forecasting in Internet of Vehicles Systems</b></a> — 
+        <b>IEEE Internet of Things Journal 2025</b>
+    </div>
+
+    <div class="pub-item">
+        <a href="https://ieeexplore.ieee.org/abstract/document/10737167" target="_blank"><b>Blockchain-as-a-Service: Architecture, Opportunities and Challenges</b></a> — 
+        <b>IEEE Internet of Things Magazine 2024</b>
+    </div>
+
+    <div class="pub-item">
+        <a href="https://link.springer.com/chapter/10.1007/978-3-031-75872-0_11" target="_blank"><b>Generating Secure Workflow Designs from Requirements Goal Models Using Patterns</b></a> — 
+        <b>ER Conceptual Modelling Conference 2024</b> <span style="color: red; font-weight: bold;">(Core A)</span>
+    </div>
+
+    <div class="pub-item">
+        <a href="https://dl.acm.org/doi/abs/10.1145/3696428" target="_blank"><b>A Blockchain-Based Privacy-Preserving Charging Station Reservation and Payment Scheme for Electric Vehicles</b></a> — 
+        <b>ACM Distributed Ledger Technologies Journal</b>
+    </div>
+
+    <div class="pub-item">
+        <a href="https://ieeexplore.ieee.org/abstract/document/10541078" target="_blank"><b>Block-FeDL: Electric vehicle charging load forecasting using federated learning and blockchain</b></a> — 
+        <b>IEEE Transactions on Vehicular Technology 2024</b>
+    </div>
+
+    <div class="pub-item">
+        <a href="https://ieeexplore.ieee.org/abstract/document/10438884" target="_blank"><b>Blockchain for energy credits and certificates: a comprehensive review</b></a> — 
+        <b>IEEE Transactions on Sustainable Computing 2024</b> <span style="color: var(--s3-navy); font-size: 0.9em;">(Work with Hydro-Quebec)</span>
+    </div>
+
+    <div class="pub-item">
+        <a href="https://ieeexplore.ieee.org/abstract/document/9398554" target="_blank"><b>BlockAIM: a neural network-based intelligent middleware for large-scale IoT data placement decisions</b></a> — 
+        <b>IEEE Transactions on Mobile Computing 2022</b>
+    </div>
+
+    <div class="pub-item">
+        <a href="https://ieeexplore.ieee.org/abstract/document/9310692" target="_blank"><b>BlockEV: Efficient and secure charging station selection for electric vehicles</b></a> — 
+        <b>IEEE Transactions on Intelligent Transportation Systems 2021</b>
+    </div>
+
+    <div class="pub-item">
+        <a href="https://ieeexplore.ieee.org/abstract/document/9126003/" target="_blank"><b>BlockAM: An adaptive middleware for intelligent data storage selection for Internet of Things</b></a> — 
+        <b>IEEE DAPPS 2020</b> <span style="color: red; font-weight: bold;">(Best Paper Award)</span>
+    </div>
+
+    <div class="pub-item">
+        <a href="https://ieeexplore.ieee.org/abstract/document/8422721" target="_blank"><b>Network intrusion detection system for jamming attack in lorawan join procedure</b></a> — 
+        <b>IEEE ICC 2018</b>
+    </div>
+</div>
+        <p><a href="https://scholar.google.ca/citations?user=OAiYfI8AAAAJ" style="font-weight: bold; color: var(--s3-emerald);">View all papers on Google Scholar →</a></p>
+
+        <h2 id="teaching" class="section-header">Teaching</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+            <div>
+                <h3>Graduate</h3>
+                <p>• COSC5806: Data Analysis with Python</p>
+                <p>• COSC5856: Intro to Cybersecurity</p>
+                <p>• COSC5437: Neural Networks & Deep Learning</p>
+            </div>
+            <div>
+                <h3>Undergraduate</h3>
+                <p>• COSC1047: Computer Science II</p>
+                <p>• COSC3796: IT Security & Privacy</p>
+                <p>• COSC2956: Internet Tools</p>
+            </div>
+        </div>
+
+        <h2 id="contact" class="section-header">Prospective Students</h2>
+        <div style="background: var(--s3-light-green); padding: 30px; border-radius: 15px; text-align: center;">
+            <p>If you are interested, please send an email with your <strong>CV</strong> and <strong>Transcript</strong> to <strong>syed.danish@algomau.ca</strong></p>
+            <p><small>Visit my <a href="https://www.youtube.com/@syedmuhammaddanish">YouTube Channel</a> for Web3 & Blockchain tutorials.</small></p>
+        </div>
+
+    </main>
+
+    <footer style="background: var(--s3-navy); color: white; text-align: center; padding: 40px; font-size: 13px;">
+        <p>&copy; 2026 Syed Muhammad Danish | S3 Lab @ Algoma University</p>
+        <p style="opacity: 0.5;">Sustainable Smart and Efficient Systems Laboratory</p>
+    </footer>
+
+</body>
+</html>
